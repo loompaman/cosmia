@@ -918,38 +918,45 @@ function restartQuiz() {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', buildQuiz);
 
+// Stripe Payment Links (switch for testing)
+const STRIPE_LIVE_LINK = 'https://buy.stripe.com/aFa00j44P3T06tjcd58IU0q';
+const STRIPE_TEST_LINK = 'https://buy.stripe.com/test_28E9AT30LgFM9Fvdh98IU01';
+
+// Toggle this to test: true = test mode, false = live mode
+const TEST_MODE = false;
+
 // Handle Stripe checkout with quiz data
-document.addEventListener('click', function(e) {
-    if (e.target.closest('#stripeCheckoutBtn')) {
-        e.preventDefault();
-        
-        // Sign abbreviations for compact format
-        const signAbbrev = {
-            aries: 'Ari', taurus: 'Tau', gemini: 'Gem', cancer: 'Can',
-            leo: 'Leo', virgo: 'Vir', libra: 'Lib', scorpio: 'Sco',
-            sagittarius: 'Sag', capricorn: 'Cap', aquarius: 'Aqu', pisces: 'Pis'
-        };
-        
-        // Build ALL 12 signs results (sorted by percentage)
-        // Format: Ari18-Leo15-Can12-Gem10-Vir9-Lib8-Sco7-Tau6-Sag5-Cap4-Aqu3-Pis3
-        const allResults = sortedResults.map(r => 
-            `${signAbbrev[r.sign]}${r.percentage}`
-        ).join('-');
-        
-        // Add timestamp for uniqueness
-        const timestamp = Date.now().toString(36);
-        
-        // Final reference ID (fits in Stripe's 200 char limit)
-        const clientRefId = `${allResults}_${timestamp}`;
-        
-        // Build Stripe URL with full results
-        const stripeUrl = new URL('https://buy.stripe.com/aFa00j44P3T06tjcd58IU0q');
-        stripeUrl.searchParams.set('client_reference_id', clientRefId);
-        
-        // Open Stripe checkout
-        window.open(stripeUrl.toString(), '_blank');
-    }
-});
+function openStripeCheckout() {
+    // Sign abbreviations for compact format
+    const signAbbrev = {
+        aries: 'Ari', taurus: 'Tau', gemini: 'Gem', cancer: 'Can',
+        leo: 'Leo', virgo: 'Vir', libra: 'Lib', scorpio: 'Sco',
+        sagittarius: 'Sag', capricorn: 'Cap', aquarius: 'Aqu', pisces: 'Pis'
+    };
+    
+    // Build ALL 12 signs results (sorted by percentage)
+    // Format: Ari18-Leo15-Can12-Gem10-Vir9-Lib8-Sco7-Tau6-Sag5-Cap4-Aqu3-Pis3
+    const allResults = sortedResults.map(r => 
+        `${signAbbrev[r.sign]}${r.percentage}`
+    ).join('-');
+    
+    // Add timestamp for uniqueness
+    const timestamp = Date.now().toString(36);
+    
+    // Final reference ID (fits in Stripe's 200 char limit)
+    const clientRefId = `${allResults}_${timestamp}`;
+    
+    // Build Stripe URL with results
+    const stripeUrl = new URL(TEST_MODE ? STRIPE_TEST_LINK : STRIPE_LIVE_LINK);
+    stripeUrl.searchParams.set('client_reference_id', clientRefId);
+    
+    // Log for debugging
+    console.log('Opening Stripe with reference:', clientRefId);
+    console.log('Full URL:', stripeUrl.toString());
+    
+    // Open Stripe checkout
+    window.open(stripeUrl.toString(), '_blank');
+}
 
 // Add shake animation
 const style = document.createElement('style');
