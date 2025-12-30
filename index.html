@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Most Accurate Horoscope Test | Cosmia</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1REPD71DKF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1REPD71DKF');
+    </script>
+    <meta name="description" content="Discover which star signs shape your personality with our 24-question quiz. Get your cosmic blueprint and see compatibility with all 12 zodiac signs.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="moon-icon">☽</div>
+            <h1 class="title">COSMIA</h1>
+            <p class="subtitle">Find out your true star sign based on your personality:</p>
+        </header>
+
+        <!-- Quiz Section -->
+        <main class="quiz-main" id="quizMain">
+            <div class="questions-list" id="questionsList"></div>
+            
+            <div class="submit-section">
+                <p class="answered-count"><span id="answeredCount">0</span> / 24 answered</p>
+                <button class="submit-btn" id="submitBtn" onclick="showResults()">
+                    <span>Reveal My Signs</span>
+                    <span class="btn-stars">✦</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- Results Section -->
+        <section id="results" class="results-section hidden">
+            <!-- Free Results -->
+            <div class="results-header">
+                <h2 class="results-title">Your Cosmic Blueprint</h2>
+                <p class="results-subtitle">The stars have spoken</p>
+            </div>
+            
+            <div class="top-signs" id="topSigns"></div>
+            
+            <div class="results-accuracy" id="resultsAccuracy"></div>
+
+            <div class="results-summary" id="resultsSummary"></div>
+
+            <div class="compatibility-teaser" id="compatibilityTeaser"></div>
+            
+            <div class="sneak-peek" id="sneakPeek"></div>
+            
+            <div class="all-signs" id="allSigns"></div>
+
+            <!-- Teaser / Locked Content -->
+            <div class="locked-section">
+                <div class="locked-header">
+                    <span class="lock-icon">🔒</span>
+                    <h3>Your Full Cosmic Report</h3>
+                    <p>Unlock deep insights about your unique celestial makeup</p>
+                </div>
+
+                <!-- Blurred Preview Cards -->
+                <div class="locked-previews">
+                    <div class="preview-card blurred">
+                        <div class="preview-icon">💫</div>
+                        <h4>Personality Deep Dive</h4>
+                        <p class="preview-text">Your Aries dominance combined with Scorpio undertones creates a rare intensity that...</p>
+                    </div>
+                    <div class="preview-card blurred">
+                        <div class="preview-icon">💕</div>
+                        <h4>Love & Compatibility</h4>
+                        <p class="preview-text">With your cosmic profile, you're most compatible with partners who have strong...</p>
+                    </div>
+                    <div class="preview-card blurred">
+                        <div class="preview-icon">💼</div>
+                        <h4>Career & Purpose</h4>
+                        <p class="preview-text">Your celestial combination suggests you thrive in roles that require both...</p>
+                    </div>
+                    <div class="preview-card blurred">
+                        <div class="preview-icon">⚡</div>
+                        <h4>Strengths & Shadows</h4>
+                        <p class="preview-text">Your fire sign dominance gives you natural leadership, but watch for the shadow side...</p>
+                    </div>
+                </div>
+
+                <!-- What's Included -->
+                <div class="whats-included">
+                    <h4>What's in your full report:</h4>
+                    <ul class="included-list">
+                        <li><span class="check">✓</span> Detailed analysis of all 12 signs in your profile</li>
+                        <li><span class="check">✓</span> Personalized personality breakdown</li>
+                        <li><span class="check">✓</span> Love & relationship compatibility guide</li>
+                        <li><span class="check">✓</span> Career path recommendations</li>
+                        <li><span class="check">✓</span> Hidden strengths & shadow traits</li>
+                        <li><span class="check">✓</span> Monthly cosmic forecast</li>
+                    </ul>
+                </div>
+
+                <!-- Social Proof -->
+                <div class="social-proof">
+                    <div class="proof-stats">
+                        <div class="stat">
+                            <span class="stat-number">127,482</span>
+                            <span class="stat-label">Reports generated</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">4.9★</span>
+                            <span class="stat-label">Average rating</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">94%</span>
+                            <span class="stat-label">Said "scary accurate"</span>
+                        </div>
+                    </div>
+                    <div class="testimonials-grid">
+                        <div class="testimonial">
+                            <p>"I'm a Virgo but got Scorpio dominant. Read the report and it explained EVERYTHING about my relationships. Finally makes sense."</p>
+                            <div class="testimonial-footer">
+                                <span class="testimonial-author">— Jessica T.</span>
+                                <span class="testimonial-sign">♍ → ♏</span>
+                            </div>
+                        </div>
+                        <div class="testimonial">
+                            <p>"Sent this to my therapist because it described my patterns better than I could after 2 years of sessions 😭"</p>
+                            <div class="testimonial-footer">
+                                <span class="testimonial-author">— Marcus R.</span>
+                                <span class="testimonial-sign">♌ dominant</span>
+                            </div>
+                        </div>
+                        <div class="testimonial">
+                            <p>"The compatibility section saved my relationship. I finally understood why my partner does what they do."</p>
+                            <div class="testimonial-footer">
+                                <span class="testimonial-author">— Priya K.</span>
+                                <span class="testimonial-sign">♋ / ♒ match</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing -->
+                <div class="pricing-section">
+                    <div class="price-card featured">
+                        <div class="price-badge">Most Popular</div>
+                        <h4>Full Cosmic Report</h4>
+                        <div class="price">
+                            <span class="price-old">$19.99</span>
+                            <span class="price-current">$9.99</span>
+                        </div>
+                        <p class="price-note">One-time purchase • Instant access</p>
+                        <a href="https://buy.stripe.com/aFa00j44P3T06tjcd58IU0q" class="buy-btn">
+                            <span>Unlock My Report</span>
+                            <span class="btn-stars">✦</span>
+                        </a>
+                        <p class="guarantee">30-day money-back guarantee</p>
+                    </div>
+                </div>
+
+                <!-- Urgency -->
+                <div class="urgency-banner">
+                    <span class="urgency-icon">⏰</span>
+                    <p>Launch price: <strong>50% off</strong> ends soon</p>
+                </div>
+            </div>
+
+            <button class="retake-btn" onclick="restartQuiz()">
+                <span>Retake Quiz</span>
+            </button>
+        </section>
+
+        <!-- Premium Report Section (shown after purchase) -->
+        <section id="premiumReport" class="premium-section hidden">
+            <div class="results-header">
+                <h2 class="results-title">Your Complete Cosmic Report</h2>
+                <p class="results-subtitle" id="reportSubtitle">Personalized for you</p>
+            </div>
+
+            <div class="premium-content" id="premiumContent">
+                <!-- Generated dynamically -->
+            </div>
+
+            <button class="retake-btn" onclick="restartQuiz()">
+                <span>Take Quiz Again</span>
+            </button>
+        </section>
+    </div>
+
+
+    <script src="quiz-data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
