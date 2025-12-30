@@ -132,6 +132,12 @@ function showResults() {
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
+    // Track quiz completion
+    trackEvent('quiz_completed', {
+        dominant_sign: sortedResults[0].sign,
+        dominant_percentage: sortedResults[0].percentage
+    });
+    
     // Display top 3 signs
     const topSignsContainer = document.getElementById('topSigns');
     topSignsContainer.innerHTML = '';
@@ -204,6 +210,14 @@ function showResults() {
     
     // Update blurred preview text based on results
     updatePreviewText();
+}
+
+// Track event in Google Analytics
+function trackEvent(eventName, eventParams = {}) {
+    if (typeof gtag !== 'undefined') {
+        gtag('event', eventName, eventParams);
+        console.log('📊 Tracked:', eventName, eventParams);
+    }
 }
 
 // Generate accuracy banner at top of results
@@ -953,6 +967,12 @@ function openStripeCheckout() {
     // Log for debugging
     console.log('Opening Stripe with reference:', clientRefId);
     console.log('Full URL:', stripeUrl.toString());
+    
+    // Track button click
+    trackEvent('unlock_report_clicked', {
+        dominant_sign: sortedResults[0].sign,
+        results_summary: allResults
+    });
     
     // Open Stripe checkout
     window.open(stripeUrl.toString(), '_blank');
