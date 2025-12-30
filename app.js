@@ -918,6 +918,39 @@ function restartQuiz() {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', buildQuiz);
 
+// Handle Stripe checkout with quiz data
+document.addEventListener('click', function(e) {
+    if (e.target.closest('#stripeCheckoutBtn')) {
+        e.preventDefault();
+        
+        // Sign abbreviations for compact format
+        const signAbbrev = {
+            aries: 'Ari', taurus: 'Tau', gemini: 'Gem', cancer: 'Can',
+            leo: 'Leo', virgo: 'Vir', libra: 'Lib', scorpio: 'Sco',
+            sagittarius: 'Sag', capricorn: 'Cap', aquarius: 'Aqu', pisces: 'Pis'
+        };
+        
+        // Build ALL 12 signs results (sorted by percentage)
+        // Format: Ari18-Leo15-Can12-Gem10-Vir9-Lib8-Sco7-Tau6-Sag5-Cap4-Aqu3-Pis3
+        const allResults = sortedResults.map(r => 
+            `${signAbbrev[r.sign]}${r.percentage}`
+        ).join('-');
+        
+        // Add timestamp for uniqueness
+        const timestamp = Date.now().toString(36);
+        
+        // Final reference ID (fits in Stripe's 200 char limit)
+        const clientRefId = `${allResults}_${timestamp}`;
+        
+        // Build Stripe URL with full results
+        const stripeUrl = new URL('https://buy.stripe.com/aFa00j44P3T06tjcd58IU0q');
+        stripeUrl.searchParams.set('client_reference_id', clientRefId);
+        
+        // Open Stripe checkout
+        window.open(stripeUrl.toString(), '_blank');
+    }
+});
+
 // Add shake animation
 const style = document.createElement('style');
 style.textContent = `
