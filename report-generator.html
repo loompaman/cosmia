@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmia Report Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a12;
+            --bg-card: #12121f;
+            --accent-gold: #c9a55c;
+            --accent-gold-light: #e8d5a3;
+            --text-light: #f0ead6;
+            --text-muted: #a0a0b0;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-light);
+            padding: 2rem;
+        }
+        
+        .generator {
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+        }
+        
+        .generator h1 {
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--accent-gold);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 500;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: inherit;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .gen-btn {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+            color: #1a1a2e;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+        }
+        
+        .gen-btn:hover { opacity: 0.9; }
+        
+        /* Premium Report Styles */
+        .report {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fffef9;
+            color: #2a2a3d;
+            border-radius: 0;
+            display: none;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+        }
+        
+        .report.visible { display: block; }
+        
+        /* Cover Page */
+        .report-cover {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d4a 50%, #1a1a2e 100%);
+            color: #fff;
+            padding: 4rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .report-cover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a55c' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        
+        .report-cover > * { position: relative; z-index: 1; }
+        
+        .cover-moon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .cover-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 400;
+            letter-spacing: 1rem;
+            color: var(--accent-gold);
+            margin-bottom: 0.5rem;
+        }
+        
+        .cover-divider {
+            width: 120px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+            margin: 1.5rem auto;
+        }
+        
+        .cover-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+            letter-spacing: 0.3rem;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            color: #fff;
+        }
+        
+        .cover-for {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+        }
+        
+        .cover-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: var(--accent-gold-light);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        /* Content Pages */
+        .report-content {
+            padding: 3rem;
+        }
+        
+        /* Top Signs Display */
+        .top-signs-section {
+            background: linear-gradient(135deg, #f8f6f0, #fff);
+            padding: 3rem;
+            margin: -3rem -3rem 3rem -3rem;
+            border-bottom: 3px solid var(--accent-gold);
+        }
+        
+        .section-label {
+            text-align: center;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3rem;
+            color: #888;
+            margin-bottom: 2rem;
+        }
+        
+        .top-signs {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 2rem;
+        }
+        
+        .top-sign {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            min-width: 160px;
+            position: relative;
+        }
+        
+        .top-sign.primary {
+            transform: scale(1.15);
+            background: linear-gradient(135deg, #1a1a2e, #2d2d4a);
+            color: #fff;
+            box-shadow: 0 20px 60px rgba(26,26,46,0.3);
+        }
+        
+        .top-sign.primary .sign-label { color: var(--accent-gold); }
+        .top-sign.primary .sign-name { color: #fff; }
+        .top-sign.primary .sign-percent { color: var(--accent-gold-light); }
+        .top-sign.primary .sign-traits { color: rgba(255,255,255,0.6); }
+        
+        .sign-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+        
+        .sign-symbol {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .sign-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 0.25rem;
+        }
+        
+        .sign-percent {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--accent-gold);
+        }
+        
+        .sign-traits {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 0.75rem;
+            font-style: italic;
+        }
+        
+        /* Element Bar */
+        .element-bar {
+            display: flex;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 2rem 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .element-bar div { transition: width 1s ease; }
+        .element-water { background: linear-gradient(90deg, #4a90a4, #6bb3c9); }
+        .element-earth { background: linear-gradient(90deg, #7d9a6f, #9ab88c); }
+        .element-air { background: linear-gradient(90deg, #a8a4ce, #c5c2e0); }
+        .element-fire { background: linear-gradient(90deg, #d4845a, #e8a878); }
+        
+        .element-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .element-legend span {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .element-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        /* Sections */
+        .section {
+            margin: 3rem 0;
+            page-break-inside: avoid;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0ede5;
+        }
+        
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            letter-spacing: 0.05rem;
+        }
+        
+        .section p {
+            font-size: 0.95rem;
+            line-height: 1.9;
+            margin-bottom: 1.25rem;
+            color: #444;
+        }
+        
+        .section p:last-child { margin-bottom: 0; }
+        
+        .section strong {
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+        
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, #f8f6f0, #fff);
+            border-left: 4px solid var(--accent-gold);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .highlight-box p {
+            margin: 0;
+            font-style: italic;
+            color: #555;
+        }
+        
+        /* Compatibility Grid */
+        .compat-section {
+            margin-top: 2rem;
+        }
+        
+        .compat-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .compat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            font-weight: 600;
+            width: 100px;
+            padding-top: 1rem;
+        }
+        
+        .compat-label.great { color: #2d8a5b; }
+        .compat-label.good { color: var(--accent-gold); }
+        .compat-label.challenging { color: #c97a3c; }
+        
+        .compat-items {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+        
+        .compat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        
+        .compat-item.great { border-color: #2d8a5b; background: #f0fdf4; }
+        .compat-item.good { border-color: var(--accent-gold); background: #fffbf2; }
+        .compat-item.challenging { border-color: #c97a3c; background: #fff8f0; }
+        
+        .compat-item span:first-child { font-size: 1.25rem; }
+        
+        /* List Styling */
+        .styled-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+        
+        .styled-list li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            color: #444;
+        }
+        
+        .styled-list li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: var(--accent-gold);
+        }
+        
+        /* All Signs Grid */
+        .all-signs-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .all-sign-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: #f8f6f0;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+        
+        .all-sign-item span:first-child { font-size: 1.2rem; }
+        .all-sign-item .pct {
+            margin-left: auto;
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+        
+        /* Footer */
+        .report-footer {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #1a1a2e, #2d2d4a);
+            color: #fff;
+        }
+        
+        .footer-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            letter-spacing: 0.5rem;
+        }
+        
+        .footer-tagline {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 0.5rem;
+            letter-spacing: 0.1rem;
+        }
+        
+        /* Print Button */
+        .print-btn {
+            display: block;
+            margin: 2rem auto;
+            background: linear-gradient(135deg, #1a1a2e, #2d2d4a);
+            color: #fff;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.9rem;
+            letter-spacing: 0.1rem;
+        }
+        
+        .print-btn:hover { opacity: 0.9; }
+        
+        @page {
+            margin: 0.5in;
+            /* This removes headers/footers in supported browsers */
+        }
+        
+        @media print {
+            body { 
+                background: white; 
+                padding: 0;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .generator { display: none; }
+            .report { box-shadow: none; margin: 0; }
+            .print-btn { display: none; }
+            .section { page-break-inside: avoid; }
+            .report-cover { page-break-after: always; }
+        }
+        
+        @media (max-width: 700px) {
+            .top-signs { flex-direction: column; align-items: center; }
+            .top-sign.primary { transform: scale(1.05); }
+            .all-signs-grid { grid-template-columns: repeat(2, 1fr); }
+            .compat-row { flex-direction: column; }
+            .compat-label { width: auto; padding-top: 0; margin-bottom: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="generator">
+        <h1>☽ Generate Cosmic Report</h1>
+        
+        <label>Customer Name</label>
+        <input type="text" id="customerName" placeholder="e.g., Sarah">
+        
+        <label>Results String (from Stripe)</label>
+        <input type="text" id="resultsString" placeholder="e.g., Sco15-Pis13-Can12-Cap12-Vir10...">
+        
+        <button class="gen-btn" onclick="generateReport()">Generate Premium Report</button>
+    </div>
+    
+    <div class="report" id="report"></div>
+
+    <script>
+        const zodiacSigns = {
+            Ari: { name: 'Aries', symbol: '♈', element: 'Fire', traits: 'Bold · Ambitious · Energetic' },
+            Tau: { name: 'Taurus', symbol: '♉', element: 'Earth', traits: 'Patient · Reliable · Devoted' },
+            Gem: { name: 'Gemini', symbol: '♊', element: 'Air', traits: 'Curious · Adaptable · Witty' },
+            Can: { name: 'Cancer', symbol: '♋', element: 'Water', traits: 'Intuitive · Nurturing · Protective' },
+            Leo: { name: 'Leo', symbol: '♌', element: 'Fire', traits: 'Confident · Creative · Charismatic' },
+            Vir: { name: 'Virgo', symbol: '♍', element: 'Earth', traits: 'Analytical · Practical · Diligent' },
+            Lib: { name: 'Libra', symbol: '♎', element: 'Air', traits: 'Diplomatic · Harmonious · Fair' },
+            Sco: { name: 'Scorpio', symbol: '♏', element: 'Water', traits: 'Passionate · Determined · Intuitive' },
+            Sag: { name: 'Sagittarius', symbol: '♐', element: 'Fire', traits: 'Adventurous · Optimistic · Free' },
+            Cap: { name: 'Capricorn', symbol: '♑', element: 'Earth', traits: 'Disciplined · Responsible · Driven' },
+            Aqu: { name: 'Aquarius', symbol: '♒', element: 'Air', traits: 'Independent · Original · Visionary' },
+            Pis: { name: 'Pisces', symbol: '♓', element: 'Water', traits: 'Compassionate · Artistic · Intuitive' }
+        };
+        
+        const personalityDeep = {
+            Sco: {
+                core: `As a Scorpio-dominant personality, you experience life with extraordinary intensity. You don't do anything halfway—when you love, you love completely; when you commit, you're all in; when you're hurt, you feel it in your bones.`,
+                detail: `You possess an almost supernatural ability to read people. Within moments of meeting someone, you can sense their true intentions, their hidden fears, their unspoken desires. This makes you an incredible judge of character, but it can also be isolating—you see through the masks that others don't even know they're wearing.`,
+                shadow: `Your "Intensity Paradox" is real: You crave deep, transformative connection, but you test people before you trust them. You push to see if they'll stay. Sometimes you push them away before they can leave you first. Learning to trust without testing is your growth edge.`
+            },
+            Pis: {
+                core: `With strong Pisces energy, you possess a rare gift: the ability to feel what others feel, often before they know it themselves. You're like an emotional sponge, absorbing the energies of everyone around you.`,
+                detail: `Your imagination is boundless. You see possibilities where others see limitations. Art, music, and creative expression aren't just hobbies for you—they're how you process the overwhelming amount of feeling you carry. The boundary between reality and dreams is thinner for you than for most.`,
+                shadow: `The "Escapism Cycle" is your shadow: Reality can feel harsh when you feel everything so deeply. You may retreat into fantasy, sleep, or other escapes because the "real world" is simply... a lot. Finding grounding practices is essential for your wellbeing.`
+            },
+            Can: {
+                core: `Your Cancer energy makes you the emotional backbone of your relationships. You remember birthdays without reminders, notice when someone's mood shifts, and create spaces where people feel safe to be vulnerable.`,
+                detail: `Home isn't just a place for you—it's a feeling. You need a sanctuary, a space that's truly yours, where you can retreat and recharge your emotional batteries. Your nurturing instincts run deep, sometimes to your own detriment.`,
+                shadow: `Your protective instincts are fierce. Hurt someone you love, and you'll discover just how sharp those crab claws can be. Learning to protect yourself as fiercely as you protect others is your growth edge.`
+            },
+            Cap: {
+                core: `Your Capricorn energy gives you remarkable discipline and long-term vision. While others chase quick wins, you're building something that lasts.`,
+                detail: `You understand that real success takes time, and you're willing to put in the work. Your patience is your superpower—you can delay gratification in ways that others simply cannot.`,
+                shadow: `The "Achievement Treadmill" is real for you: You reach a goal, feel satisfied for approximately five minutes, then immediately set your sights higher. Rest feels like laziness. Remember: your worth isn't measured by your accomplishments.`
+            },
+            Vir: {
+                core: `Your Virgo energy makes you incredibly observant. You notice the details others miss—the typo in the email, the slight shift in someone's tone, the thing that's slightly out of place.`,
+                detail: `You're driven by a genuine desire to be useful. Nothing satisfies you more than solving a problem or helping someone improve. Your analytical mind is a gift.`,
+                shadow: `Your inner critic can be relentless. The perfectionist voice that drives your excellence can also be the voice that tells you nothing is ever good enough. Learning self-compassion is essential.`
+            },
+            Aqu: {
+                core: `Your Aquarius energy gives you a unique perspective. You think differently, and that's your superpower. While everyone follows the crowd, you're three steps ahead with a better idea.`,
+                detail: `You're connected to something larger than yourself—humanity as a whole. Your ideas often seem ahead of their time because they usually are.`,
+                shadow: `You may feel like an outsider more than you let on. Deeply connected to the collective, yet lonely in a crowd. Finding your true community is essential for your happiness.`
+            },
+            Tau: {
+                core: `Your Taurus energy provides grounding stability. When life gets chaotic, you're the calm in the storm. You value quality over quantity in everything.`,
+                detail: `Your sensory experience of life is rich—you notice textures, tastes, sounds that others rush past. This makes you an appreciator of life's finer pleasures.`,
+                shadow: `Change can feel threatening when stability is your anchor. Learning to embrace necessary change while maintaining your core values is your growth edge.`
+            },
+            Gem: {
+                core: `Your Gemini energy keeps your mind constantly active. You're curious about everything and can hold conversations on virtually any topic.`,
+                detail: `You process the world through communication and connection. Ideas become real for you when you can talk about them, write about them, share them.`,
+                shadow: `Your quick mind can sometimes scatter your focus. Learning to go deep, not just wide, will help you master what you're naturally curious about.`
+            },
+            Ari: {
+                core: `Your Aries energy gives you initiative and courage. When something needs to be done, you don't wait for permission—you act.`,
+                detail: `You're a natural pioneer, willing to go first, to try things others are afraid to attempt. Your confidence inspires others to be brave.`,
+                shadow: `Patience is not your natural virtue. Learning that some things take time—and that's okay—is part of your journey.`
+            },
+            Sag: {
+                core: `Your Sagittarius energy brings optimism and adventure. You believe things will work out, and that belief often makes it so.`,
+                detail: `You're a seeker of truth and meaning. Travel, philosophy, and expanding your horizons aren't just interests—they're necessities for your soul.`,
+                shadow: `Commitment can feel like a cage. Learning that you can have roots AND wings is your growth edge.`
+            },
+            Lib: {
+                core: `Your Libra energy gives you natural diplomacy. You see all sides of every situation and can bring people together.`,
+                detail: `Beauty and harmony aren't superficial to you—they're essential. You create balance wherever you go.`,
+                shadow: `Decision-making can be paralyzing when you see validity in every option. Learning to trust your own preferences is essential.`
+            },
+            Leo: {
+                core: `Your Leo energy gives you warmth and natural charisma. When you walk into a room, people notice.`,
+                detail: `You have a generous heart and love to see others shine. Your creativity and self-expression are gifts to the world.`,
+                shadow: `The need for recognition can sometimes overshadow your authentic self. Remember: you are worthy simply because you exist, not because of what you achieve.`
+            }
+        };
+        
+        const compatData = {
+            Sco: { great: ['Can', 'Pis', 'Vir'], good: ['Cap', 'Tau'], challenging: ['Leo', 'Aqu'] },
+            Pis: { great: ['Can', 'Sco', 'Tau'], good: ['Cap', 'Vir'], challenging: ['Gem', 'Sag'] },
+            Can: { great: ['Sco', 'Pis', 'Tau'], good: ['Vir', 'Cap'], challenging: ['Ari', 'Lib'] },
+            Cap: { great: ['Tau', 'Vir', 'Sco'], good: ['Pis', 'Can'], challenging: ['Ari', 'Lib'] },
+            Vir: { great: ['Tau', 'Cap', 'Can'], good: ['Sco', 'Pis'], challenging: ['Gem', 'Sag'] },
+            Aqu: { great: ['Gem', 'Lib', 'Sag'], good: ['Ari', 'Leo'], challenging: ['Tau', 'Sco'] },
+            Tau: { great: ['Vir', 'Cap', 'Can'], good: ['Pis', 'Sco'], challenging: ['Leo', 'Aqu'] },
+            Gem: { great: ['Lib', 'Aqu', 'Ari'], good: ['Leo', 'Sag'], challenging: ['Vir', 'Pis'] },
+            Ari: { great: ['Leo', 'Sag', 'Gem'], good: ['Aqu', 'Lib'], challenging: ['Can', 'Cap'] },
+            Sag: { great: ['Ari', 'Leo', 'Lib'], good: ['Aqu', 'Gem'], challenging: ['Vir', 'Pis'] },
+            Lib: { great: ['Gem', 'Aqu', 'Leo'], good: ['Sag', 'Ari'], challenging: ['Can', 'Cap'] },
+            Leo: { great: ['Ari', 'Sag', 'Gem'], good: ['Lib', 'Aqu'], challenging: ['Tau', 'Sco'] }
+        };
+        
+        const careerPaths = {
+            Sco: 'Psychology, investigation, research, surgery, crisis management, detective work, financial strategy, transformation coaching',
+            Pis: 'Arts, music, healing professions, counseling, photography, spiritual work, nursing, creative writing',
+            Can: 'Healthcare, counseling, real estate, hospitality, childcare, interior design, food industry, social work',
+            Cap: 'Executive leadership, finance, engineering, law, government, architecture, business strategy',
+            Vir: 'Healthcare, editing, research, data analysis, quality assurance, nutrition, veterinary medicine',
+            Aqu: 'Technology, innovation, humanitarian work, science, social reform, aviation, astrology',
+            Tau: 'Finance, real estate, culinary arts, music, luxury goods, agriculture, beauty industry',
+            Gem: 'Journalism, marketing, teaching, sales, writing, social media, public relations',
+            Ari: 'Entrepreneurship, athletics, military, emergency services, sales leadership, startups',
+            Sag: 'Travel, education, publishing, law, philosophy, international business, motivational speaking',
+            Lib: 'Law, diplomacy, design, art curation, human resources, mediation, fashion',
+            Leo: 'Entertainment, executive leadership, politics, coaching, performing arts, design'
+        };
+        
+        function parseResults(str) {
+            const parts = str.split('_')[0].split('-');
+            return parts.map(p => {
+                const match = p.match(/([A-Za-z]+)(\d+)/);
+                if (match) return { abbr: match[1], percent: parseInt(match[2]) };
+                return null;
+            }).filter(Boolean);
+        }
+        
+        function generateReport() {
+            const name = document.getElementById('customerName').value || 'Friend';
+            const resultsStr = document.getElementById('resultsString').value;
+            
+            if (!resultsStr) { alert('Please enter the results string'); return; }
+            
+            const results = parseResults(resultsStr);
+            const top3 = results.slice(0, 3);
+            
+            const top1 = zodiacSigns[top3[0].abbr];
+            const top2 = zodiacSigns[top3[1].abbr];
+            const top3Sign = zodiacSigns[top3[2].abbr];
+            
+            const p1 = personalityDeep[top3[0].abbr] || personalityDeep.Sco;
+            const p2 = personalityDeep[top3[1].abbr] || personalityDeep.Pis;
+            const p3 = personalityDeep[top3[2].abbr] || personalityDeep.Can;
+            
+            const elements = { Fire: 0, Earth: 0, Air: 0, Water: 0 };
+            results.forEach(r => {
+                const sign = zodiacSigns[r.abbr];
+                if (sign) elements[sign.element] += r.percent;
+            });
+            
+            const compat = compatData[top3[0].abbr] || compatData.Sco;
+            const careers = careerPaths[top3[0].abbr] || careerPaths.Sco;
+            
+            const report = document.getElementById('report');
+            report.innerHTML = `
+                <div class="report-cover">
+                    <span class="cover-moon">☽</span>
+                    <div class="cover-brand">COSMIA</div>
+                    <div class="cover-divider"></div>
+                    <h1 class="cover-title">Complete Cosmic Report</h1>
+                    <p class="cover-for">Prepared Exclusively For</p>
+                    <p class="cover-name">${name}</p>
+                </div>
+                
+                <div class="report-content">
+                    <div class="top-signs-section">
+                        <p class="section-label">Your Cosmic Signature</p>
+                        <div class="top-signs">
+                            <div class="top-sign">
+                                <div class="sign-label">Secondary</div>
+                                <span class="sign-symbol">${top2.symbol}</span>
+                                <div class="sign-name">${top2.name}</div>
+                                <div class="sign-percent">${top3[1].percent}%</div>
+                                <div class="sign-traits">${top2.traits}</div>
+                            </div>
+                            <div class="top-sign primary">
+                                <div class="sign-label">Dominant</div>
+                                <span class="sign-symbol">${top1.symbol}</span>
+                                <div class="sign-name">${top1.name}</div>
+                                <div class="sign-percent">${top3[0].percent}%</div>
+                                <div class="sign-traits">${top1.traits}</div>
+                            </div>
+                            <div class="top-sign">
+                                <div class="sign-label">Tertiary</div>
+                                <span class="sign-symbol">${top3Sign.symbol}</span>
+                                <div class="sign-name">${top3Sign.name}</div>
+                                <div class="sign-percent">${top3[2].percent}%</div>
+                                <div class="sign-traits">${top3Sign.traits}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-bar">
+                            <div class="element-water" style="width: ${elements.Water}%"></div>
+                            <div class="element-earth" style="width: ${elements.Earth}%"></div>
+                            <div class="element-air" style="width: ${elements.Air}%"></div>
+                            <div class="element-fire" style="width: ${elements.Fire}%"></div>
+                        </div>
+                        <div class="element-legend">
+                            <span><span class="element-dot" style="background:#4a90a4"></span> Water ${elements.Water}%</span>
+                            <span><span class="element-dot" style="background:#7d9a6f"></span> Earth ${elements.Earth}%</span>
+                            <span><span class="element-dot" style="background:#a8a4ce"></span> Air ${elements.Air}%</span>
+                            <span><span class="element-dot" style="background:#d4845a"></span> Fire ${elements.Fire}%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-icon">✦</div>
+                            <h2 class="section-title">Your Cosmic Overview</h2>
+                        </div>
+                        <p>Your dominant sign is <strong>${top1.name}</strong>, which means you lead with ${top1.traits.toLowerCase().replace(/ · /g, ', ')} energy. This core essence shapes how you approach life, relationships, and your deepest desires.</p>
+                        <p>Your secondary influence is <strong>${top2.name}</strong> at ${top3[1].percent}%, adding layers of ${top2.traits.split(' · ')[0].toLowerCase()} qualities to your personality. Combined with <strong>${top3Sign.name}</strong> (${top3[2].percent}%) as your tertiary sign, you have a unique cosmic signature that sets you apart.</p>
+                        
+                        <div class="highlight-box">
+                            <p>With <strong>${elements.Water}% Water energy</strong>, you possess exceptional emotional intelligence and intuitive abilities. You feel things that others miss entirely—this is both your gift and your challenge.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-icon">◈</div>
+                            <h2 class="section-title">Deep Personality Analysis</h2>
+                        </div>
+                        
+                        <p><strong>Your ${top1.name} Core</strong></p>
+                        <p>${p1.core}</p>
+                        <p>${p1.detail}</p>
+                        
+                        <div class="highlight-box">
+                            <p><strong>Shadow Work:</strong> ${p1.shadow}</p>
+                        </div>
+                        
+                        <p><strong>Your ${top2.name} Influence</strong></p>
+                        <p>${p2.core}</p>
+                        <p>${p2.detail}</p>
+                        
+                        <p><strong>Your ${top3Sign.name} Layer</strong></p>
+                        <p>${p3.core}</p>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-icon">♡</div>
+                            <h2 class="section-title">Love & Compatibility</h2>
+                        </div>
+                        <p>With your ${top1.name}-${top2.name} combination, you need a partner who can match your emotional depth while providing the security and understanding you crave. Surface-level connections will never satisfy you—you need someone willing to go deep.</p>
+                        
+                        <div class="compat-section">
+                            <div class="compat-row">
+                                <div class="compat-label great">Excellent</div>
+                                <div class="compat-items">
+                                    ${compat.great.map(s => `<div class="compat-item great"><span>${zodiacSigns[s].symbol}</span>${zodiacSigns[s].name}</div>`).join('')}
+                                </div>
+                            </div>
+                            <div class="compat-row">
+                                <div class="compat-label good">Good</div>
+                                <div class="compat-items">
+                                    ${compat.good.map(s => `<div class="compat-item good"><span>${zodiacSigns[s].symbol}</span>${zodiacSigns[s].name}</div>`).join('')}
+                                </div>
+                            </div>
+                            <div class="compat-row">
+                                <div class="compat-label challenging">Growth</div>
+                                <div class="compat-items">
+                                    ${compat.challenging.map(s => `<div class="compat-item challenging"><span>${zodiacSigns[s].symbol}</span>${zodiacSigns[s].name}</div>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p style="margin-top:1.5rem"><strong>Best Matches:</strong> ${compat.great.map(s => zodiacSigns[s].name).join(', ')}—these signs understand your depth and won't be intimidated by your intensity. They can meet you where you are emotionally.</p>
+                        <p><strong>Challenging Matches:</strong> ${compat.challenging.map(s => zodiacSigns[s].name).join(', ')}—not impossible, but requires conscious effort and understanding from both sides. These relationships often teach the most profound lessons.</p>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-icon">◆</div>
+                            <h2 class="section-title">Career & Purpose</h2>
+                        </div>
+                        <p>Your ${top1.name} nature combined with ${top2.name} qualities makes you ideally suited for roles that require depth, intuition, and emotional intelligence. You thrive when your work has meaning—a paycheck alone will never be enough.</p>
+                        
+                        <p><strong>Ideal Career Paths:</strong></p>
+                        <p>${careers}</p>
+                        
+                        <p><strong>Work Style:</strong> You work best when you can go deep on projects rather than juggling many surface-level tasks. You need autonomy and the freedom to pursue excellence in your own way.</p>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-icon">★</div>
+                            <h2 class="section-title">Strengths & Growth Areas</h2>
+                        </div>
+                        
+                        <p><strong>Your Superpowers</strong></p>
+                        <ul class="styled-list">
+                            <li>Emotional intelligence that borders on psychic ability</li>
+                            <li>Loyalty and commitment that runs deeper than most can comprehend</li>
+                            <li>Ability to transform, evolve, and reinvent yourself</li>
+                            <li>Natural ability to help others heal, grow, and transform</li>
+                            <li>Seeing through facades to the truth beneath</li>
+                        </ul>
+                        
+                        <p><strong>Growth Opportunities</strong></p>
+                        <ul class="styled-list">
+                            <li>Learning to trust without needing to test people first</li>
+                            <li>Setting healthy boundaries to protect your emotional energy</li>
+                            <li>Allowing vulnerability without fear of betrayal</li>
+                            <li>Finding healthy outlets instead of escapism when overwhelmed</li>
+                            <li>Balancing your intensity with lightness and play</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-icon">☆</div>
+                            <h2 class="section-title">Your Complete Cosmic Breakdown</h2>
+                        </div>
+                        <p>Here's how all twelve zodiac energies show up in your personality, ranked by influence:</p>
+                        <div class="all-signs-grid">
+                            ${results.map(r => `
+                                <div class="all-sign-item">
+                                    <span>${zodiacSigns[r.abbr]?.symbol || '?'}</span>
+                                    <span>${zodiacSigns[r.abbr]?.name || r.abbr}</span>
+                                    <span class="pct">${r.percent}%</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="report-footer">
+                    <div class="footer-brand">☽ COSMIA</div>
+                    <p class="footer-tagline">The Most Accurate Horoscope Test</p>
+                </div>
+                
+                <button class="print-btn" onclick="window.print()">📄 Save as PDF</button>
+            `;
+            
+            report.classList.add('visible');
+            report.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
