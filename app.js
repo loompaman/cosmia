@@ -167,6 +167,14 @@ function showResults() {
         topSignsContainer.appendChild(card);
     });
     
+    // Add emotional insight right after percentage breakdown
+    const emotionalInsight = document.createElement('div');
+    emotionalInsight.className = 'emotional-insight';
+    const top3Signs = sortedResults.slice(0, 3);
+    const emotionalText = generateEmotionalInsight(top3Signs);
+    emotionalInsight.innerHTML = `<p class="emotional-text">${emotionalText}</p>`;
+    topSignsContainer.appendChild(emotionalInsight);
+    
     // Display all signs
     const allSignsContainer = document.getElementById('allSigns');
     allSignsContainer.innerHTML = '';
@@ -242,6 +250,85 @@ function generateAccuracyBanner() {
             <span>${msg.text}</span>
         </div>
     `;
+}
+
+// Generate emotional insight based on top signs
+function generateEmotionalInsight(top3Signs) {
+    const sign1 = zodiacSigns[top3Signs[0].sign];
+    const sign2 = zodiacSigns[top3Signs[1].sign];
+    const sign3 = zodiacSigns[top3Signs[2].sign];
+    
+    // Get elements
+    const elements = [sign1.element, sign2.element, sign3.element];
+    const waterCount = elements.filter(e => e === 'Water').length;
+    const fireCount = elements.filter(e => e === 'Fire').length;
+    const earthCount = elements.filter(e => e === 'Earth').length;
+    const airCount = elements.filter(e => e === 'Air').length;
+    
+    // Generate insights based on combinations
+    const insights = [];
+    
+    // Water-dominant insights
+    if (waterCount >= 2) {
+        insights.push("This mix explains why you feel deeply, attach quickly, and struggle to let go — even when you know better.");
+    } else if (waterCount === 1 && fireCount >= 1) {
+        insights.push("This combination explains why you're both passionate and protective — you feel everything intensely, then act on it.");
+    } else if (waterCount === 1 && earthCount >= 1) {
+        insights.push("This mix explains why you feel deeply but stay grounded — you process emotions slowly, then build something stable from them.");
+    }
+    
+    // Fire-dominant insights
+    else if (fireCount >= 2) {
+        insights.push("This combination explains why you move fast, speak your mind, and get restless when things slow down — you're built for action.");
+    } else if (fireCount === 1 && airCount >= 1) {
+        insights.push("This mix explains why you're both impulsive and intellectual — you think fast, then act faster.");
+    }
+    
+    // Earth-dominant insights
+    else if (earthCount >= 2) {
+        insights.push("This combination explains why you're practical, patient, and sometimes stubborn — you build things that last, even when it takes time.");
+    } else if (earthCount === 1 && airCount >= 1) {
+        insights.push("This mix explains why you're both analytical and grounded — you think things through, then make them real.");
+    }
+    
+    // Air-dominant insights
+    else if (airCount >= 2) {
+        insights.push("This combination explains why you're curious, adaptable, and sometimes detached — you process life through ideas, not just feelings.");
+    }
+    
+    // Specific sign combinations
+    if (sign1.name === 'Scorpio' || sign2.name === 'Scorpio') {
+        insights.push("This mix explains why you feel deeply, attach quickly, and struggle to let go — even when you know better.");
+    } else if (sign1.name === 'Cancer' || sign2.name === 'Cancer') {
+        insights.push("This combination explains why you're nurturing, protective, and sometimes moody — you feel everything, especially for others.");
+    } else if (sign1.name === 'Pisces' || sign2.name === 'Pisces') {
+        insights.push("This mix explains why you're intuitive, empathetic, and sometimes overwhelmed — you absorb energy like a sponge.");
+    } else if (sign1.name === 'Aries' || sign2.name === 'Aries') {
+        insights.push("This combination explains why you're bold, impatient, and always ready to start something new — you don't wait for permission.");
+    } else if (sign1.name === 'Leo' || sign2.name === 'Leo') {
+        insights.push("This mix explains why you're confident, creative, and need recognition — you shine brightest when others see you.");
+    } else if (sign1.name === 'Sagittarius' || sign2.name === 'Sagittarius') {
+        insights.push("This combination explains why you're optimistic, restless, and always seeking — you need freedom to grow.");
+    } else if (sign1.name === 'Taurus' || sign2.name === 'Taurus') {
+        insights.push("This mix explains why you're patient, loyal, and sometimes stuck — you value stability, even when it holds you back.");
+    } else if (sign1.name === 'Virgo' || sign2.name === 'Virgo') {
+        insights.push("This combination explains why you're analytical, helpful, and sometimes critical — you see what needs fixing, including in yourself.");
+    } else if (sign1.name === 'Capricorn' || sign2.name === 'Capricorn') {
+        insights.push("This mix explains why you're disciplined, ambitious, and sometimes hard on yourself — you're always building toward something bigger.");
+    } else if (sign1.name === 'Gemini' || sign2.name === 'Gemini') {
+        insights.push("This combination explains why you're curious, adaptable, and sometimes scattered — your mind moves faster than most can follow.");
+    } else if (sign1.name === 'Libra' || sign2.name === 'Libra') {
+        insights.push("This mix explains why you're diplomatic, balanced, and sometimes indecisive — you see all sides, which makes choosing harder.");
+    } else if (sign1.name === 'Aquarius' || sign2.name === 'Aquarius') {
+        insights.push("This combination explains why you're independent, original, and sometimes detached — you think differently, which can feel isolating.");
+    }
+    
+    // Default fallback
+    if (insights.length === 0) {
+        insights.push("This mix explains why you're complex, layered, and sometimes hard to understand — you don't fit into one box.");
+    }
+    
+    return insights[0]; // Return the first matching insight
 }
 
 // Generate sneak peek from paid report
